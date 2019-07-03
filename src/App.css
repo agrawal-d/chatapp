@@ -1,0 +1,204 @@
+* {
+    box-sizing: border-box;
+}
+
+body, input, textarea, button, select, option {
+    font-family: 'Product Sans', sans-serif;
+    font-weight: regular;
+    background: rgb(233, 233, 233);
+    color: black;
+    margin: 0px;
+}
+
+body {
+    background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+    height: 100vh;
+    overflow-y: hidden;
+}
+
+.text-center{
+    text-align:center;
+}
+
+.color-white{
+    color:white;
+}
+
+.padding-10{
+    padding:10px;
+}
+.app-row {
+    height: 100%;
+}
+
+.col-8 {
+    padding: 0px;
+}
+
+
+.chat-app {
+    width: 1000px;
+    max-width: 100vw;
+    margin: 0 auto;
+    height: 600px;
+    margin: 0 auto;
+    margin-top: calc(50vh - 300px);
+    /* background: rgb(43, 98, 170); */
+    /* background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12); */
+    box-shadow: 0px 0px 35px 0px rgba(0, 0, 0, 0.2);
+}
+
+.chats {
+    border-right: 1px solid rgba(250, 250, 250, 0.2);
+    padding: 0px !important;
+    background: rgba(248, 248, 248, 0.5);
+}
+
+.chats-inner ul {
+    padding-left: 0px;
+    margin: 0px;
+    list-style-type: none;
+    clear: both;
+}
+
+.chat-search{
+    width:100%;
+}
+
+.chats-inner ul li {
+    width: 100%;
+    margin: 0px;
+    color: black;
+    padding: 20px;
+    background: transparent;
+    border-bottom: 1px solid rgba(200, 200, 200, 0.2);
+    cursor: pointer;
+}
+
+.chats-inner ul li.active {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.chatbox {
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.bubble-container {
+    padding: 20px !important;
+    overflow-y: auto;
+    height: 550px;
+    max-height: 550px;
+    border-bottom: 1px solid whitesmoke;
+}
+
+.chat-bubble {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background: rgba(200, 200, 200, 0.3);
+    color: white;
+    max-width: 400px;
+}
+
+.chat-bubble-info {
+    font-size: 50%;
+    color: black;
+}
+
+.chat-bubble.sent {
+    float: right;
+    clear: both;
+    color: black;
+    background: rgba(199, 194, 240, 0.5);
+}
+
+.chat-bubble.received {
+    float: left;
+    clear: both;
+}
+
+.no-chat-selected {
+    text-align: center;
+    padding: 30px;
+}
+
+.chat-text-box-container {
+    height: 50px;
+}
+
+.chat-text-box {
+    height: calc(100%);
+    width: calc(100% - 40px);
+    border-right: 1px solid rgba(255, 255, 255, 0.6);
+    border: 0px;
+    outline: none;
+    float: left;
+    color: black;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 15px;
+}
+
+.option-button {
+    width: 40px;
+    height: 100%;
+    float: right;
+    outline: none;
+    display: block;
+    border: 0px;
+    background: rgba(240, 240, 240, 0.6);
+    color: black;
+}
+
+.chat-text-box:focus {
+    box-shadow: 0px 2px 15px 0px rgba(32, 72, 204, 0.1) inset;
+}
+
+.clearfix {
+    min-height: 1px;
+    display: block;
+    clear: both;
+    content: ".";
+}
+
+.login {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 50px;
+    text-align: center;
+    color: white;
+}
+
+.theme-btn {
+    padding: 10px 20px 10px 20px;
+    background: grey;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 0px;
+    outline: none;
+}
+
+.theme-input {
+    padding: 10px 20px 10px 20px;
+    background: grey;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 0px;
+}
+
+.login-field {
+    display: block;
+    margin: 0 auto;
+    width: 300px;
+}
+
+img.loading {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    margin-right:10px;
+}
+
+.chat-search{
+    padding:20px;
+    background:rgba(0,0,0,0.1);
+}
