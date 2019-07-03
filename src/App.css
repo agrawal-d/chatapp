@@ -16,17 +16,61 @@ body {
     overflow-y: hidden;
 }
 
-.text-center{
-    text-align:center;
+.text-center {
+    text-align: center;
 }
 
-.color-white{
-    color:white;
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 20px;
+    background: rgba(83, 192, 101, 0.5);
+    color: white;
+    transition: all 1s;
+    opacity: 1;
+    display: block;
+    animation-name: hide;
+    animation-duration: 5s;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2)
 }
 
-.padding-10{
-    padding:10px;
+.checkbox {
+    vertical-align: bottom;
+    background: transparent;
+    opacity: 0.7;
 }
+
+.toast:focus {
+    display: none;  
+}
+
+@keyframes hide {
+    0% {
+        opacity: 1;
+        background: rgba(83, 192, 101, 0.5);
+    }
+    90% {
+        opacity: 1;
+        background: rgba(83, 192, 101, 0.5);
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.color-white {
+    color: white;
+}
+
+.padding-10 {
+    padding: 10px;
+}
+
 .app-row {
     height: 100%;
 }
@@ -34,7 +78,6 @@ body {
 .col-8 {
     padding: 0px;
 }
-
 
 .chat-app {
     width: 1000px;
@@ -61,8 +104,8 @@ body {
     clear: both;
 }
 
-.chat-search{
-    width:100%;
+.chat-search {
+    width: 100%;
 }
 
 .chats-inner ul li {
@@ -195,10 +238,10 @@ img.loading {
     width: 32px;
     height: 32px;
     vertical-align: middle;
-    margin-right:10px;
+    margin-right: 10px;
 }
 
-.chat-search{
-    padding:20px;
-    background:rgba(0,0,0,0.1);
+.chat-search {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.1);
 }
