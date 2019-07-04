@@ -14,18 +14,38 @@ class Toast extends React.Component {
     super(props);
     this.fadeOut = this.fadeOut.bind(this);
     this.state = {
-      hidden: false
+      hidden: false,
+      message: props.message,
+      interval: setInterval(this.fadeOut, 5000),
+      time: this.props.time,
     }
   }
 
-  componentDidMount() {
-    this.interval = setInterval(this.fadeOut, 5000)
+  componentWillUnmount() {
+    clearInterval(this.state.interval);
+    this.state.interval = null;
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-    this.interval = null;
+  componentDidUpdate() {
+    if (this.props.time !== this.state.time) {
+      this.setState({
+        hidden: false,
+        message: this.props.message,
+        interval: setInterval(this.fadeOut, 5000),
+        time: this.props.time
+      })
+    } else {
+    }
   }
+
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.message !== state.message) {
+  //     state.hidden = false;
+  //     state.message = props.message;
+  //     state.interval = setInterval(this.fadeOut, 5000);
+  //   }
+  //   return state
+  // }
 
   fadeOut() {
     this.setState({
@@ -36,7 +56,7 @@ class Toast extends React.Component {
   render() {
     return (
       <div className={(this.state.hidden) ? "toast hidden" : "toast visible"} tabIndex="100">
-        {this.props.message}
+        {this.state.message}
       </div >
     )
   }
@@ -151,7 +171,6 @@ class Chatbox extends React.Component {
 
   fetchNewMessages() {
     if (this.state.chat) {
-      // console.log("Date fetched - >", this.props.chat.messages[this.props.chat.messages.length - 1].date)
       this.props.fetchNewMessagesForActiveChat(this.state.name, this.state.chat.messages[0].chatId, this.state.chat.messages[this.state.chat.messages.length - 1].date);
     }
 
@@ -170,7 +189,6 @@ class Chatbox extends React.Component {
   // SubmitMessage
   handleMessageBoxKeyPress(e) {
     if (e.keyCode === 13) {
-      console.log("Submit");
       const value = this.state.newMessage;
       const chatId = this.state.chat.messages[0].chatId;
       this.props.submitMessage(this.state.name, value, chatId);
@@ -288,7 +306,6 @@ class SearchResults extends React.Component {
       focus: false,
       query: ""
     })
-    console.log("FOCUS")
   }
 
   handleFocus() {
@@ -296,13 +313,11 @@ class SearchResults extends React.Component {
       focus: true,
     })
 
-    console.log("BLUR")
 
   }
 
   doSearch(query) {
     const people = this.props.people;
-    console.log(query, people);
   }
 
   handleInputChange(e) {
@@ -314,7 +329,6 @@ class SearchResults extends React.Component {
   handleSubmit(e) {
     if (e.keyCode == 13) {
       const query = this.state.query;
-      // console.log("Search query ->", query);
       axios.post(`${this.props.globalSettings.serverRoot}my-chats/search`, {
         query: query,
         people: this.props.people,
@@ -369,6 +383,7 @@ class ChatApp extends React.Component {
     this.state = {
       notDownloaded: true,
       toast: null,
+      toastTime: Math.random(),
       active: null,
       activeChatIndex: -1,
       globalSettings: {
@@ -442,7 +457,8 @@ class ChatApp extends React.Component {
             }).then((response) => {
               if (response.data.error) {
                 this.setState({
-                  toast: "An error occurred while trying to load your chats\n, please try again."
+                  toast: "An error occurred while trying to load your chats\n, please try again.",
+                  toastTime: Math.random()
                 })
                 console.error("Login", response.data.error)
                 return;
@@ -462,7 +478,8 @@ class ChatApp extends React.Component {
       ).catch((error) => {
         console.error("OOPS", error)
         this.setState({
-          toast: error
+          toast: error,
+          toastTime: Math.random()
         })
 
       })
@@ -488,7 +505,6 @@ class ChatApp extends React.Component {
 
   }
   fecthNewMessagesForParticularChat(name, chatId, date) {
-    console.log("Fetch chat id", name, chatId, date);
     axios.post(`${this.state.globalSettings.serverRoot}my-chats/new-messages`, {
       withCredentials: true,
       date: date,
@@ -496,7 +512,6 @@ class ChatApp extends React.Component {
     }, {
         withCredentials: true
       }).then((response) => {
-        console.log("Refreshed Chats Length - >", response.data.length)
         if (response.data.length > 0) {
           const newChats = this.state.chats;
           newChats[this.state.activeChatIndex].messages = newChats[this.state.activeChatIndex].messages.concat(response.data);
@@ -507,7 +522,8 @@ class ChatApp extends React.Component {
 
       }).catch((error) => {
         this.setState({
-          toast: "Error while fetching new chats."
+          toast: "Error while fetching new chats.",
+          toastTime: Math.random()
         })
         console.error("Fetch new messages error - >", error);
       })
@@ -525,31 +541,35 @@ class ChatApp extends React.Component {
         withCredentials: true
       }
     ).then((response) => {
-      console.log("POSTED new message", response.data)
     }).catch((error) => {
       console.error("POSTED new message", error)
       this.setState({
-        toast: `Error posting message ${error}`
+        toast: `Error posting message ${error}`,
+        toastTime: Math.random()
       })
 
     })
-    console.log("Submit Message", from, value, chatId);
   }
 
   handleNewChat(data) {
     if (data.data.error) {
       console.error("New Chat Received error", data.data.error);
       this.setState({
-        toast: "Failed to create a new conversation"
+        toast: "Failed to create a new conversation",
+        toastTime: Math.random()
       })
     } else {
-      console.log("New Conversation ->", data.data);
 
-      if (!data.data.result) {
+      if (!data.data.empty) {
         const chats = this.state.chats;
         chats.unshift(data.data);
         this.setState({
           chats: chats
+        })
+      } else {
+        this.setState({
+          toast: "No matching account",
+          toastTime: Math.random()
         })
       }
 
@@ -560,9 +580,9 @@ class ChatApp extends React.Component {
 
     var additionalRenders;
     if (this.state.newAccount) {
-      additionalRenders = <Toast message="A new account was created for you. Welcome to Chat" />;
-      console.log("New Account")
+      additionalRenders = <Toast message="A new account was created for you. Welcome to Chat" date={Math.random()} />;
     }
+
 
 
     if (!this.state.globalSettings.loggedIn) {
@@ -595,6 +615,7 @@ class ChatApp extends React.Component {
 
       return (
         <div className="chat-app container">
+          <Toast message={this.state.toast} time={this.state.toastTime} ></Toast>
           {additionalRenders}
           <div className="row app-row">
             <div className="col-4 chats">
