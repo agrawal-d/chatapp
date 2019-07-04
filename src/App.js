@@ -314,7 +314,18 @@ class SearchResults extends React.Component {
   handleSubmit(e) {
     if (e.keyCode == 13) {
       const query = this.state.query;
-      console.log("Search query ->", query);
+      // console.log("Search query ->", query);
+      axios.post(`${this.props.globalSettings.serverRoot}my-chats/search`, {
+        query: query,
+        people: this.props.people,
+        withCredentials: true
+      }, {
+          withCredentials: true
+        }).then((response) => {
+          this.props.handleSearchResult(response)
+        }).catch((error) => {
+          console.error("Searching", error)
+        })
       this.setState({
         query: " "
       })
@@ -377,6 +388,7 @@ class ChatApp extends React.Component {
     this.handleProceedButton = this.handleProceedButton.bind(this);
     this.fecthNewMessagesForParticularChat = this.fecthNewMessagesForParticularChat.bind(this);
     this.submitMessage = this.submitMessage.bind(this)
+    this.handleNewChat = this.handleNewChat.bind(this)
   }
 
   componentDidMount() {
@@ -524,6 +536,26 @@ class ChatApp extends React.Component {
     console.log("Submit Message", from, value, chatId);
   }
 
+  handleNewChat(data) {
+    if (data.data.error) {
+      console.error("New Chat Received error", data.data.error);
+      this.setState({
+        toast: "Failed to create a new conversation"
+      })
+    } else {
+      console.log("New Conversation ->", data.data);
+
+      if (!data.data.result) {
+        const chats = this.state.chats;
+        chats.unshift(data.data);
+        this.setState({
+          chats: chats
+        })
+      }
+
+    }
+  }
+
   render() {
 
     var additionalRenders;
@@ -532,7 +564,7 @@ class ChatApp extends React.Component {
       console.log("New Account")
     }
 
-    
+
     if (!this.state.globalSettings.loggedIn) {
       return (
         <Loginform globalSettings={this.state.globalSettings} handleProceedButton={this.handleProceedButton} message={this.state.loginFormMessage}></Loginform>
@@ -567,7 +599,7 @@ class ChatApp extends React.Component {
           <div className="row app-row">
             <div className="col-4 chats">
               <div className="chats-inner">
-                <SearchResults globalSettings={this.props.globalSettings} people={people} />
+                <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} />
                 <ul>
                   {chats}
                 </ul>
