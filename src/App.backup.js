@@ -2,9 +2,7 @@ import React from 'react';
 import './bootstrap-grid.css';
 import './App.css';
 import loading from './loading.gif'
-import loadingBlack from './loading-black.gif'
-
-import { throwStatement, tsMethodSignature } from '@babel/types';
+import { throwStatement } from '@babel/types';
 const axios = require('axios');
 
 
@@ -112,47 +110,25 @@ class Chatbox extends React.Component {
     super(props);
     this.state = {
       newMessage: "",
-      chat: props.chat,
-      name: props.name,
-      scrollTop: null,
     };
 
     this.handleMessageBoxChange = this.handleMessageBoxChange.bind(this)
     this.handleMessageBoxKeyPress = this.handleMessageBoxKeyPress.bind(this)
     this.fetchNewMessages = this.fetchNewMessages.bind(this)
-    // this.scrollToBottom = this.scrollToBottom.bind(this)
   }
 
   componentDidMount() {
-    this.setState({
-      refreshInterval: setInterval(this.fetchNewMessages, 2000)
-    })
-    this.scrollToBottom();
+    this.refreshInterval = setInterval(this.fetchNewMessages, 2000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.refreshInterval)
-  }
-
-  componentDidUpdate() {
-    this.scrollToBottom();
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.chat && props.name) {
-      if (props.chat !== state.chat || props.name !== state.name) {
-        state.name = props.name;
-        state.chat = props.chat;
-
-      }
-    }
-    return state
+    clearInterval(this.refreshInterval)
   }
 
   fetchNewMessages() {
-    if (this.state.chat) {
+    if (this.props.chat) {
       // console.log("Date fetched - >", this.props.chat.messages[this.props.chat.messages.length - 1].date)
-      this.props.fetchNewMessagesForActiveChat(this.state.name, this.state.chat.messages[0].chatId, this.state.chat.messages[this.state.chat.messages.length - 1].date);
+      this.props.fetchNewMessagesForActiveChat(this.props.name, this.props.chat.messages[0].chatId, this.props.chat.messages[this.props.chat.messages.length - 1].date);
     }
 
   }
@@ -163,46 +139,29 @@ class Chatbox extends React.Component {
     })
   }
 
-  scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: "smooth", block: 'nearest', inline: 'start' });
-  }
-
-  // SubmitMessage
   handleMessageBoxKeyPress(e) {
     if (e.keyCode === 13) {
       console.log("Submit");
       const value = this.state.newMessage;
-      const chatId = this.state.chat.messages[0].chatId;
-      this.props.submitMessage(this.state.name, value, chatId);
-      const chat = this.state.chat;
-      // chat.messages.push({
-      //   from: <span><img src={loadingBlack} style={{ width: "10px", height: "10px", verticalAlign: "middle" }} /> Sending</span>,
-      //   message: value,
-      //   date: chat.messages[chat.messages.length - 1].date,
-      //   _id: chat.messages[chat.messages.length - 1].date + Math.random(),
-      // })
+      this.props.submitMessage(this.props.name, value);
       this.setState({
-        newMessage: "",
-        chat: chat,
+        newMessage: ""
       })
     }
   }
 
-
   render() {
     const chatbubbles = [];
-    if (!this.state.chat) {
+    if (!this.props.chat) {
       return (<div className="chatbox " >
         <div className="bubble-container">
-          <p className="text-center white-text">Choose a conversation to show messages.</p>
-          <div style={{ float: "left", clear: "both" }}
-            ref={(el) => { this.messagesEnd = el; }}>
-          </div>
+          <p className="text-center white-texr">Choose a conversation to show messages.</p>
+
         </div>
       </div >)
     } else {
-      for (const message of this.state.chat.messages) {
-        const bubbleClassName = "chat-bubble " + (message.from === this.state.name ? "received" : "sent");
+      for (const message of this.props.chat.messages) {
+        const bubbleClassName = "chat-bubble " + (message.from === this.props.name ? "received" : "sent");
         chatbubbles.push(
           <div className={bubbleClassName} key={message._id}>
             <div className="chat-bubble-info">
@@ -220,9 +179,6 @@ class Chatbox extends React.Component {
         <div className="chatbox ">
           <div className="bubble-container">
             {chatbubbles}
-            <div style={{ float: "left", clear: "both" }}
-              ref={(el) => { this.messagesEnd = el; }}>
-            </div>
 
           </div>
           <div className="chat-text-box-container">
@@ -238,99 +194,6 @@ class Chatbox extends React.Component {
 
   }
 }
-
-
-function Results(props) {
-  if (props.status.focus) {
-    return (
-      <div>
-        <div className="search-result visible">
-          <div className="search-results-list">
-            {props.status.resultElement}
-          </div>
-        </div>
-      </div >
-
-    )
-  } else {
-    return (
-      <div></div>
-    )
-  }
-
-}
-
-
-class SearchResults extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      query: "",
-      visible: false,
-      result: "",
-      id: "search-input",
-      resultElement: <span>Press enter to search, and only an exact match will appear for privacy.</span>
-    };
-
-
-    this.doSearch = this.doSearch.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleFocus = this.handleFocus.bind(this)
-    this.handleBlur = this.handleBlur.bind(this)
-
-
-
-  }
-
-  handleBlur() {
-    this.setState({
-      focus: false,
-      query: ""
-    })
-    console.log("FOCUS")
-  }
-
-  handleFocus() {
-    this.setState({
-      focus: true,
-    })
-
-    console.log("BLUR")
-
-  }
-
-  doSearch(query) {
-    const people = this.props.people;
-    console.log(query, people);
-  }
-
-  handleInputChange(e) {
-    this.setState({
-      query: e.target.value
-    })
-  }
-
-  handleSubmit(e) {
-    if (e.keyCode == 13) {
-      const query = this.state.query;
-      console.log("Search query ->", query);
-      this.setState({
-        query: " "
-      })
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <input className="theme-btn chat-search" placeholder="Search for people" onChange={this.handleInputChange} onKeyUp={this.handleSubmit} value={this.state.query} onFocus={this.handleFocus} onBlur={this.handleBlur} />
-        <Results status={this.state} />
-      </div>
-    )
-  }
-}
-
 
 class Chat extends React.Component {
   constructor(props) {
@@ -356,12 +219,11 @@ class ChatApp extends React.Component {
     super(props);
     this.activate = this.activate.bind(this);
     this.state = {
-      notDownloaded: true,
       toast: null,
       active: null,
       activeChatIndex: -1,
       globalSettings: {
-        name: null,
+        name: "Divyanshu Agrawal",
         id: null,
         email: null,
         accessKey: null,
@@ -376,7 +238,6 @@ class ChatApp extends React.Component {
 
     this.handleProceedButton = this.handleProceedButton.bind(this);
     this.fecthNewMessagesForParticularChat = this.fecthNewMessagesForParticularChat.bind(this);
-    this.submitMessage = this.submitMessage.bind(this)
   }
 
   componentDidMount() {
@@ -386,11 +247,7 @@ class ChatApp extends React.Component {
   refreshChatLists() {
   }
 
-  /*
-  Handleproceedbutton handles login and initial download of saved chats, also handles new accounts
-  */
   handleProceedButton(name, password, newAccount) {
-
     this.setState({
       loginFormMessage: (
         <span>
@@ -416,7 +273,6 @@ class ChatApp extends React.Component {
             return;
           }
           const seti = this.state.globalSettings;
-          seti.name = response.data.name;
           seti.loggedIn = true;
           this.setState({
             globalSettings: seti,
@@ -437,7 +293,6 @@ class ChatApp extends React.Component {
               } else {
                 const newState = this.state;
                 newState.chats = response.data;
-                newState.notDownloaded = false;
                 this.setState(newState);
               }
 
@@ -447,7 +302,7 @@ class ChatApp extends React.Component {
             })
 
         }
-      ).catch((error) => {
+      ).catch(function (error) {
         console.error("OOPS", error)
         this.setState({
           toast: error
@@ -476,7 +331,7 @@ class ChatApp extends React.Component {
 
   }
   fecthNewMessagesForParticularChat(name, chatId, date) {
-    console.log("Fetch chat id", name, chatId, date);
+    console.log("Fetch chat id", name, date);
     axios.post(`${this.state.globalSettings.serverRoot}my-chats/new-messages`, {
       withCredentials: true,
       date: date,
@@ -501,38 +356,16 @@ class ChatApp extends React.Component {
       })
   }
 
-  submitMessage(from, value, chatId) {
-    //from parameter sent is uselss.
-    axios.post(`${this.state.globalSettings.serverRoot}my-chats/submit-message`, {
-      from: this.state.globalSettings.name,
-      message: value,
-      chatId: chatId,
-      withCredentials: true
-    },
-      {
-        withCredentials: true
-      }
-    ).then((response) => {
-      console.log("POSTED new message", response.data)
-    }).catch((error) => {
-      console.error("POSTED new message", error)
-      this.setState({
-        toast: `Error posting message ${error}`
-      })
-
-    })
-    console.log("Submit Message", from, value, chatId);
+  submitMessage(name, value) {
+    console.log("Submit Message", name, value);
   }
 
   render() {
-
     var additionalRenders;
     if (this.state.newAccount) {
       additionalRenders = <Toast message="A new account was created for you. Welcome to Chat" />;
       console.log("New Account")
     }
-
-    
     if (!this.state.globalSettings.loggedIn) {
       return (
         <Loginform globalSettings={this.state.globalSettings} handleProceedButton={this.handleProceedButton} message={this.state.loginFormMessage}></Loginform>
@@ -544,22 +377,13 @@ class ChatApp extends React.Component {
           <Chat name={element.name} onActivate={this.activate} globalSettings={this.state.globalSettings} active={(element.name === this.state.active)} key={element.name} />
         )
       }
-      if (this.state.notDownloaded) {
+      if (chats.length === 0) {
         chats = <p className="no-chats text-center padding-10 color-white">
           <img className="loading" src={loading} alt="..." />
           Downloading conversations...</p>
-      } else if (chats.length === 0) {
-        chats = <p className="no-chats text-center padding-10 color-white">
-          To begin, search the exact name of a person and start chatting!
-                </p>
-      }
+      } else {
 
-      // List of already chatted people for SearchResults
-      const people = [];
-      for (element of this.state.chats) {
-        people.push(element.name);
       }
-
 
       return (
         <div className="chat-app container">
@@ -567,7 +391,7 @@ class ChatApp extends React.Component {
           <div className="row app-row">
             <div className="col-4 chats">
               <div className="chats-inner">
-                <SearchResults globalSettings={this.props.globalSettings} people={people} />
+                <input className="theme-btn chat-search" placeholder="Search for people" />
                 <ul>
                   {chats}
                 </ul>
