@@ -152,7 +152,7 @@ class Chatbox extends React.Component {
     this.handleMessageBoxChange = this.handleMessageBoxChange.bind(this)
     this.handleMessageBoxKeyPress = this.handleMessageBoxKeyPress.bind(this)
     this.fetchNewMessages = this.fetchNewMessages.bind(this)
-    // this.scrollToBottom = this.scrollToBottom.bind(this)
+    this.handleSmiley = this.handleSmiley.bind(this)
   }
 
   componentDidMount() {
@@ -218,6 +218,15 @@ class Chatbox extends React.Component {
     }
   }
 
+  handleSmiley() {
+    var newMessage = this.state.newMessage;
+    newMessage += " 🙂 ";
+    this.setState({
+      newMessage: newMessage
+    })
+    console.log("Smiley")
+  }
+
 
   render() {
     const chatbubbles = [];
@@ -256,8 +265,8 @@ class Chatbox extends React.Component {
 
           </div>
           <div className="chat-text-box-container">
-            <input className="chat-text-box" placeholder="Enter your message here" value={this.state.newMessage} onChange={this.handleMessageBoxChange} onKeyUp={this.handleMessageBoxKeyPress} />
-            <button className="option-button" title="Send smiling face">🙂</button>
+            <input className="chat-text-box" placeholder="Enter your message here" value={this.state.newMessage} onChange={this.handleMessageBoxChange} onKeyUp={this.handleMessageBoxKeyPress} maxLength={256} />
+            <button className="smiley-button option-button" title="Send smiling face" onClick={this.handleSmiley}>🙂</button>
             <div className="clearfix"></div>
           </div>
         </div>
@@ -406,7 +415,7 @@ class ChatApp extends React.Component {
         email: null,
         accessKey: null,
         loggedIn: null,
-        serverRoot: "http://localhost:3000/",
+        serverRoot: "https://chat-app-hereisdx.herokuapp.com/",
       },
       chats: [
 
@@ -646,7 +655,13 @@ class ChatApp extends React.Component {
   render() {
     if (!this.state.globalSettings.loggedIn) {
       return (
-        <Loginform globalSettings={this.state.globalSettings} handleProceedButton={this.handleProceedButton} message={this.state.loginFormMessage}></Loginform>
+        <div>
+          <div className="mobile">
+            <h1>🙁 📱 🚫</h1>
+            <p>We are sorry, but we currently dont support mobile devices Please use a desktop.</p>
+          </div>
+          <Loginform globalSettings={this.state.globalSettings} handleProceedButton={this.handleProceedButton} message={this.state.loginFormMessage}></Loginform>
+        </div>
       )
     } else {
       var chats = [];
@@ -673,25 +688,27 @@ class ChatApp extends React.Component {
 
 
       return (
-        <div className="chat-app container">
-          <Toast message={this.state.toast} time={this.state.toastTime} toastDuration={this.state.toastDuration} ></Toast>
-          <div className="row app-row">
-            <div className="col-4 chats">
-              <div className="chats-inner">
-                <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} />
-                <ul>
-                  {chats}
-                </ul>
+        <div>
+          <div className="chat-app container">
+            <Toast message={this.state.toast} time={this.state.toastTime} toastDuration={this.state.toastDuration} ></Toast>
+            <div className="row app-row">
+              <div className="col-4 chats">
+                <div className="chats-inner">
+                  <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} />
+                  <ul>
+                    {chats}
+                  </ul>
+                </div>
+
+
               </div>
+              <div className="col-8">
+                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} fetchNewMessagesForActiveChat={this.fecthNewMessagesForParticularChat} submitMessage={this.submitMessage}></Chatbox>
+              </div>
+            </div>
 
 
-            </div>
-            <div className="col-8">
-              <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} fetchNewMessagesForActiveChat={this.fecthNewMessagesForParticularChat} submitMessage={this.submitMessage}></Chatbox>
-            </div>
           </div>
-
-
         </div>)
     }
   }
