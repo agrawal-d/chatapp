@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/chatapp/static/css/main.c83b0477.chunk.css",
-    "main.js": "/chatapp/static/js/main.aa57aa34.chunk.js",
-    "main.js.map": "/chatapp/static/js/main.aa57aa34.chunk.js.map",
+    "main.css": "/chatapp/static/css/main.21d544f7.chunk.css",
+    "main.js": "/chatapp/static/js/main.5aa16167.chunk.js",
+    "main.js.map": "/chatapp/static/js/main.5aa16167.chunk.js.map",
     "runtime~main.js": "/chatapp/static/js/runtime~main.e147c499.js",
     "runtime~main.js.map": "/chatapp/static/js/runtime~main.e147c499.js.map",
-    "static/js/2.610a5c6b.chunk.js": "/chatapp/static/js/2.610a5c6b.chunk.js",
-    "static/js/2.610a5c6b.chunk.js.map": "/chatapp/static/js/2.610a5c6b.chunk.js.map",
+    "static/js/2.f86cf8c5.chunk.js": "/chatapp/static/js/2.f86cf8c5.chunk.js",
+    "static/js/2.f86cf8c5.chunk.js.map": "/chatapp/static/js/2.f86cf8c5.chunk.js.map",
     "index.html": "/chatapp/index.html",
-    "precache-manifest.c4188f3f9d36ad5d12e612f05d51deff.js": "/chatapp/precache-manifest.c4188f3f9d36ad5d12e612f05d51deff.js",
+    "precache-manifest.bd850f23e900e576ed5921bda4abfde4.js": "/chatapp/precache-manifest.bd850f23e900e576ed5921bda4abfde4.js",
     "service-worker.js": "/chatapp/service-worker.js",
-    "static/css/main.c83b0477.chunk.css.map": "/chatapp/static/css/main.c83b0477.chunk.css.map",
+    "static/css/main.21d544f7.chunk.css.map": "/chatapp/static/css/main.21d544f7.chunk.css.map",
     "static/media/loading.gif": "/chatapp/static/media/loading.e6ebdebf.gif"
   }
 }
