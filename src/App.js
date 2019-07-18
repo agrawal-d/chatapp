@@ -194,7 +194,7 @@ class Chatbox extends React.Component {
   handleMessageBoxKeyPress(e) {
     if (e.keyCode === 13) {
       const value = this.state.newMessage;
-      const chatId = this.state.chat.messages[0].chatId;
+      const chatId = this.props.chatId;
       this.props.submitMessage(this.state.name, value, chatId);
       const chat = this.state.chat;
       // chat.messages.push({
@@ -485,20 +485,10 @@ class ChatApp extends React.Component {
     })
 
     socket.on("new-message", (data) => {
-
       console.log("Message from server  :", data);
       const chats = this.state.chats;
-      console.log(chats)
       const activeChatIndex = this.state.activeChatIndex;
-      chats[activeChatIndex].messages.push({
-        message: data.message,
-        from: data.from,
-        chatId: data.id,
-        date: data.date,
-        // })
-      })
-
-      console.log(chats)
+      chats[activeChatIndex].messages.push(data);
       this.setState({
         chats: chats
       })
@@ -596,6 +586,19 @@ class ChatApp extends React.Component {
 
 
   activate(name) {
+    if (this.state.activeChatIndex >= 0) {
+      // var leaveIndex = -1;
+      // this.state.chats.find(function (item, i) {
+      //   if (item.name === name) {
+      //     leaveIndex = i;
+      //     return i;
+      //   }
+      // })
+      var oldActiveIndex = this.state.activeChatIndex;
+      console.log("Leaveing room", this.state.chats[oldActiveIndex].id);
+      this.state.socket.emit('leave-room', this.state.chats[oldActiveIndex].id);
+    }
+
     this.setState({
       active: name
     })
@@ -610,11 +613,12 @@ class ChatApp extends React.Component {
     this.setState({
       activeChatIndex: index
     })
+    console.log("Loading new messages for selected  chat", this.state.chats[index].id, this.state.chats[index].messages[this.state.chats[index].messages.length - 1].date);
+    this.fecthNewMessagesForParticularChat(null, this.state.chats[index].id, this.state.chats[index].messages[this.state.chats[index].messages.length - 1].date)
     console.log("Joining room", this.state.chats[index].id);
     this.state.socket.emit('join-room', this.state.chats[index].id);
-
-
   }
+
   fecthNewMessagesForParticularChat(name, chatId, date) {
     axios.post(`${this.state.globalSettings.serverRoot}my-chats/new-messages`, {
       withCredentials: true,
@@ -701,10 +705,15 @@ class ChatApp extends React.Component {
     } else {
 
       if (!data.data.empty) {
-        const chats = this.state.chats;
-        chats.unshift(data.data);
+        // const chats = this.state.chats;
+        // chats.unshift(data.data);
+        // this.setState({
+        //   chats: chats
+        // })
         this.setState({
-          chats: chats
+          toast: "Success : New Conversation will download in 6 secons ... ",
+          toastTime: Date.now(),
+          toastDuration: 10000,
         })
       } else {
         this.setState({
@@ -752,6 +761,10 @@ class ChatApp extends React.Component {
         people.push(element.name);
       }
 
+      var chatId = null;
+      if (this.state.chats[this.state.activeChatIndex]) {
+        chatId = this.state.chats[this.state.activeChatIndex].id;
+      }
 
       return (
         <div>
@@ -769,7 +782,7 @@ class ChatApp extends React.Component {
 
               </div>
               <div className="col-8">
-                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} submitMessage={this.submitMessage} socket={this.state.socket}></Chatbox>
+                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} submitMessage={this.submitMessage} socket={this.state.socket} chatId={chatId}></Chatbox>
               </div>
             </div>
 
