@@ -154,14 +154,10 @@ class Chatbox extends React.Component {
 
     this.handleMessageBoxChange = this.handleMessageBoxChange.bind(this)
     this.handleMessageBoxKeyPress = this.handleMessageBoxKeyPress.bind(this)
-    this.fetchNewMessages = this.fetchNewMessages.bind(this)
     this.handleSmiley = this.handleSmiley.bind(this)
   }
 
   componentDidMount() {
-    this.setState({
-      refreshInterval: setInterval(this.fetchNewMessages, 3000)
-    })
     this.scrollToBottom();
   }
 
@@ -182,13 +178,6 @@ class Chatbox extends React.Component {
       }
     }
     return state
-  }
-
-  fetchNewMessages() {
-    if (this.state.chat) {
-      this.props.fetchNewMessagesForActiveChat(this.state.name, this.state.chat.messages[0].chatId, this.state.chat.messages[this.state.chat.messages.length - 1].date);
-    }
-
   }
 
   handleMessageBoxChange(e) {
@@ -494,7 +483,34 @@ class ChatApp extends React.Component {
     this.setState({
       socket: socket
     })
+
+    socket.on("new-message", (data) => {
+
+      console.log("Message from server  :", data);
+      const chats = this.state.chats;
+      console.log(chats)
+      const activeChatIndex = this.state.activeChatIndex;
+      chats[activeChatIndex].messages.push({
+        message: data.message,
+        from: data.from,
+        chatId: data.id,
+        date: data.date,
+        // })
+      })
+
+      console.log(chats)
+      this.setState({
+        chats: chats
+      })
+    })
+
+
+
+
+
+
   }
+
 
   /*
   Handleproceedbutton handles login and initial download of saved chats, also handles new accounts
@@ -590,9 +606,13 @@ class ChatApp extends React.Component {
         return i;
       }
     })
+    console.log("Chat switched");
     this.setState({
       activeChatIndex: index
     })
+    console.log("Joining room", this.state.chats[index].id);
+    this.state.socket.emit('join-room', this.state.chats[index].id);
+
 
   }
   fecthNewMessagesForParticularChat(name, chatId, date) {
@@ -628,26 +648,36 @@ class ChatApp extends React.Component {
       toastTime: Date.now(),
       toastDuration: 1000,
     });
-    axios.post(`${this.state.globalSettings.serverRoot}my-chats/submit-message`, {
-      from: this.state.globalSettings.name,
+
+    const socket = this.state.socket;
+
+    socket.emit("new-message", {
       message: value,
       chatId: chatId,
-      withCredentials: true
-    },
-      {
-        withCredentials: true
-      }
-    ).then((response) => {
-      // ? 
-    }).catch((error) => {
-      console.error("Error POST new message", error)
-      this.setState({
-        toast: `Error posting message ${error}`,
-        toastTime: Math.random(),
-        toastDuration: 5000,
-      })
-
+      from: this.state.globalSettings.name
     })
+
+
+    // axios.post(`${this.state.globalSettings.serverRoot}my-chats/submit-message`, {
+    //   from: this.state.globalSettings.name,
+    //   message: value,
+    //   chatId: chatId,
+    //   withCredentials: true
+    // },
+    //   {
+    //     withCredentials: true
+    //   }
+    // ).then((response) => {
+    //   // ? 
+    // }).catch((error) => {
+    //   console.error("Error POST new message", error)
+    //   this.setState({
+    //     toast: `Error posting message ${error}`,
+    //     toastTime: Math.random(),
+    //     toastDuration: 5000,
+    //   })
+
+    // })
   }
 
 
@@ -739,7 +769,7 @@ class ChatApp extends React.Component {
 
               </div>
               <div className="col-8">
-                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} fetchNewMessagesForActiveChat={this.fecthNewMessagesForParticularChat} submitMessage={this.submitMessage} socket={this.state.socket}></Chatbox>
+                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} submitMessage={this.submitMessage} socket={this.state.socket}></Chatbox>
               </div>
             </div>
 
