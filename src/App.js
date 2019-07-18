@@ -711,7 +711,7 @@ class ChatApp extends React.Component {
         //   chats: chats
         // })
         this.setState({
-          toast: "Success : New Conversation will download in 6 secons ... ",
+          toast: "Success : New Conversation will download in 6 seconds ... ",
           toastTime: Date.now(),
           toastDuration: 10000,
         })
