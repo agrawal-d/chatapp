@@ -1,10 +1,9 @@
 import React from 'react';
+import './roboto.css'
 import './bootstrap-grid.css';
 import './App.css';
+import io from 'socket.io-client';
 import loading from './loading.gif'
-import loadingBlack from './loading-black.gif'
-
-import { throwStatement, tsMethodSignature } from '@babel/types';
 const axios = require('axios');
 
 
@@ -23,7 +22,9 @@ class Toast extends React.Component {
 
   componentWillUnmount() {
     clearTimeout(this.state.interval);
-    this.state.interval = null;
+    this.setState({
+      interval: null
+    })
   }
 
   componentDidUpdate() {
@@ -119,19 +120,20 @@ class Loginform extends React.Component {
     return (
 
       <div className="chat-app container login">
-        <Toast message='This application is still in development' />
-        <h1 className="login-text">Welcome to Chat</h1>
-        <p className="login-subtext">Login or Create an Account to start chatting.<br /> Enter your username and password or create new ones, and an account will be created for you.</p>
-        <input className="login-field theme-input" placeholder="Full Name" maxLength="64" value={this.state.nameInput} onChange={this.handleNameChange} />
-        <input className="login-field theme-input" type="password" onKeyUp={this.handleEnterkey} placeholder="Password" maxLength="128" value={this.state.passwordInput} onChange={this.handlePasswordChange} />
-        <br />
-        <button className="theme-btn login-field" onClick={this.handleProceedButton}>Proceed</button>
-        <br />
-        <input type="checkbox" className="checkbox" id="new-account" checked={this.state.newAccount} onChange={this.handleNewAccountChange} />
-        <label htmlFor="new-account">&nbsp;Create a new account</label>
-        <br />
-        <p className="message">{this.props.message}</p>
-        <small>&copy; 2019 Diyanshu Agrawal. All rights reserved.</small>
+        <form onSubmit={(e) => { e.preventDefault() }}>
+          <h1 className="login-text">Welcome to Chat</h1>
+          <p className="login-subtext">Login or Create an Account to start chatting.<br /> Enter your username and password or create new ones, and an account will be created for you.</p>
+          <input className="login-field theme-input" placeholder="Full Name" maxLength="64" value={this.state.nameInput} onChange={this.handleNameChange} />
+          <input className="login-field theme-input" type="password" onKeyUp={this.handleEnterkey} placeholder="Password" maxLength="128" value={this.state.passwordInput} onChange={this.handlePasswordChange} />
+          <br />
+          <button className="theme-btn login-field" onClick={this.handleProceedButton}>Proceed</button>
+          <br />
+          <input type="checkbox" className="checkbox" id="new-account" checked={this.state.newAccount} onChange={this.handleNewAccountChange} />
+          <label htmlFor="new-account">&nbsp;Create a new account</label>
+          <br />
+          <p className="message">{this.props.message}</p>
+          <small>&copy; 2019 Diyanshu Agrawal. All rights reserved.</small>
+        </form>
       </div >
 
     )
@@ -147,6 +149,7 @@ class Chatbox extends React.Component {
       chat: props.chat,
       name: props.name,
       scrollTop: null,
+      refreshInterval: null,
     };
 
     this.handleMessageBoxChange = this.handleMessageBoxChange.bind(this)
@@ -157,7 +160,7 @@ class Chatbox extends React.Component {
 
   componentDidMount() {
     this.setState({
-      refreshInterval: setInterval(this.fetchNewMessages, 2000)
+      refreshInterval: setInterval(this.fetchNewMessages, 3000)
     })
     this.scrollToBottom();
   }
@@ -224,7 +227,6 @@ class Chatbox extends React.Component {
     this.setState({
       newMessage: newMessage
     })
-    console.log("Smiley")
   }
 
 
@@ -348,7 +350,9 @@ class SearchResults extends React.Component {
   }
 
   handleSubmit(e) { // For new chat search
-    if (e.keyCode == 13) {
+
+    if (e.keyCode === 13) {
+      this.props.handleToast("Searching", 2000);
       const query = this.state.query;
       axios.post(`${this.props.globalSettings.serverRoot}my-chats/search`, {
         query: query,
@@ -362,7 +366,7 @@ class SearchResults extends React.Component {
           console.error("Searching", error)
         })
       this.setState({
-        query: " "
+        query: ""
       })
     }
   }
@@ -371,7 +375,7 @@ class SearchResults extends React.Component {
     return (
       <div>
         <input className="theme-btn chat-search" placeholder="Search for people" onChange={this.handleInputChange} onKeyUp={this.handleSubmit} value={this.state.query} onFocus={this.handleFocus} onBlur={this.handleBlur} />
-        <Results status={this.state} />
+        <Results status={this.state} maxLength={64} />
       </div>
     )
   }
@@ -399,13 +403,14 @@ class ChatApp extends React.Component {
 
 
   constructor(props) {
+
     super(props);
     this.activate = this.activate.bind(this);
     this.state = {
       chatInterval: null,
       notDownloaded: true,
       toast: null,
-      toastTime: Math.random(),
+      toastTime: Date.now(),
       toastDuration: 5000,
       active: null,
       activeChatIndex: -1,
@@ -415,7 +420,7 @@ class ChatApp extends React.Component {
         email: null,
         accessKey: null,
         loggedIn: null,
-        serverRoot: "https://chat-app-hereisdx.herokuapp.com/",
+        serverRoot: "http://localhost:3000/",
       },
       chats: [
 
@@ -428,12 +433,17 @@ class ChatApp extends React.Component {
     this.submitMessage = this.submitMessage.bind(this)
     this.handleNewChat = this.handleNewChat.bind(this)
     this.refreshChatLists = this.refreshChatLists.bind(this)
+    this.setupSockets = this.setupSockets.bind(this)
+    this.createInitialChatRefreshInterval = this.createInitialChatRefreshInterval.bind(this);
+    this.handleToast = this.handleToast.bind(this)
   }
 
-  componentDidMount() {
+  createInitialChatRefreshInterval() {
+    console.log("Initial Chat Lists Interval Set for 6000 seconds");
     this.setState({
-      chatInterval: setInterval(this.refreshChatLists, 6000)
+      chatInterval: setInterval(this.refreshChatLists, 6000),
     })
+
   }
 
   refreshChatLists() {
@@ -460,10 +470,8 @@ class ChatApp extends React.Component {
               toastDuration: 5000
             })
           } else {
-            console.log(data)
             if (!data.empty && data) {
               var chats = this.state.chats;
-              console.log("New conversation loaded")
               chats = chats.concat(data);
               this.setState({
                 chats: chats,
@@ -475,6 +483,17 @@ class ChatApp extends React.Component {
           }
         })
     }
+  }
+
+  setupSockets() {
+    var socket = io(this.state.globalSettings.serverRoot);
+    socket.on('test', function (msg) {
+      console.log("Test Socket message  : ", msg);
+    });
+
+    this.setState({
+      socket: socket
+    })
   }
 
   /*
@@ -514,6 +533,12 @@ class ChatApp extends React.Component {
             newAccount: response.data.newAccount
           })
 
+
+
+          this.setupSockets();
+
+
+
           axios.get(`${this.state.globalSettings.serverRoot}my-chats`, {
             withCredentials: true
           }, {
@@ -532,6 +557,7 @@ class ChatApp extends React.Component {
                 newState.chats = response.data;
                 newState.notDownloaded = false;
                 this.setState(newState);
+                setTimeout(this.createInitialChatRefreshInterval, 6000);
               }
 
             }).catch(function (error) {
@@ -543,7 +569,7 @@ class ChatApp extends React.Component {
       ).catch((error) => {
         console.error("OOPS", error)
         this.setState({
-          toast: error,
+          toast: error.toString(),
           toastTime: Date.now(),
           toastDuration: 5000,
         })
@@ -562,7 +588,6 @@ class ChatApp extends React.Component {
       if (item.name === name) {
         index = i;
         return i;
-      } else {
       }
     })
     this.setState({
@@ -596,7 +621,7 @@ class ChatApp extends React.Component {
       })
   }
 
-  submitMessage(from, value, chatId) { // Submit a chat message 
+  submitMessage(to, value, chatId) { // Submit a chat message  withing a conversation
     //from parameter sent is uselss.
     this.setState({
       toast: "Posting message",
@@ -615,7 +640,7 @@ class ChatApp extends React.Component {
     ).then((response) => {
       // ? 
     }).catch((error) => {
-      console.error("POSTED new message", error)
+      console.error("Error POST new message", error)
       this.setState({
         toast: `Error posting message ${error}`,
         toastTime: Math.random(),
@@ -624,6 +649,16 @@ class ChatApp extends React.Component {
 
     })
   }
+
+
+  handleToast(toast, toastDuration) {
+    this.setState({
+      toast: toast,
+      toastTime: Date.now(),
+      toastDuration: toastDuration
+    })
+  }
+
 
   handleNewChat(data) {
     if (data.data.error) {
@@ -643,7 +678,7 @@ class ChatApp extends React.Component {
         })
       } else {
         this.setState({
-          toast: "No matching account",
+          toast: "No matching account for your query",
           toastTime: Math.random(),
           toastDuration: 5000,
         })
@@ -656,6 +691,7 @@ class ChatApp extends React.Component {
     if (!this.state.globalSettings.loggedIn) {
       return (
         <div>
+          <Toast message={this.state.toast} time={this.state.toastTime} toastDuration={this.state.toastDuration} ></Toast>
           <div className="mobile">
             <h1>🙁 📱 🚫</h1>
             <p>We are sorry, but we currently dont support mobile devices Please use a desktop.</p>
@@ -694,7 +730,7 @@ class ChatApp extends React.Component {
             <div className="row app-row">
               <div className="col-4 chats">
                 <div className="chats-inner">
-                  <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} />
+                  <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} handleToast={this.handleToast} />
                   <ul>
                     {chats}
                   </ul>
@@ -703,7 +739,7 @@ class ChatApp extends React.Component {
 
               </div>
               <div className="col-8">
-                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} fetchNewMessagesForActiveChat={this.fecthNewMessagesForParticularChat} submitMessage={this.submitMessage}></Chatbox>
+                <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} fetchNewMessagesForActiveChat={this.fecthNewMessagesForParticularChat} submitMessage={this.submitMessage} socket={this.state.socket}></Chatbox>
               </div>
             </div>
 
@@ -716,7 +752,10 @@ class ChatApp extends React.Component {
 
 function App() {
   return (
-    <ChatApp />
+    <div>
+      <ChatApp />
+    </div>
+
   );
 }
 

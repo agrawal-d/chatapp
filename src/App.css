@@ -3,7 +3,7 @@
 }
 
 body, input, textarea, button, select, option {
-    font-family: 'Product Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: regular;
     background: rgb(233, 233, 233);
     color: black;
@@ -90,9 +90,12 @@ body {
 }
 
 .chats {
-    border-right: 1px solid rgba(250, 250, 250, 0.2);
+    border-right: 0px solid rgba(250, 250, 250, 0.2);
     padding: 0px !important;
     background: rgba(248, 248, 248, 0.5);
+    max-height: 600px;
+    overflow-y: auto;
+    word-wrap: break-word;
 }
 
 .chats-inner ul {
@@ -140,6 +143,7 @@ body {
     background: rgba(200, 200, 200, 0.9);
     color: black;
     max-width: 400px;
+    word-wrap: break-word;
 }
 
 .chat-bubble-info {
