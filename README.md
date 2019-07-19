@@ -1,9 +1,23 @@
-## chatapp
+# ChatApp
 
-This project is still in development, so the readme will not be always up-to-date. 
+This project is live at https://hereisdx.github.io/chatapp .
 
-* Before runing make sure to run ```npm install```
-* To run this app, you need to install chat-backend repositoy. The chat-backend server must be started before starting chatapp, to prevent port issues.
+ChatApp is a public, real-time chat application. It uses WebSockets when possible to enable real time communication between clients. This application is made with React for the UI and functionality, and depends on a backend server ( chat-backend ) to facilitate identity verification and message delivery.
+
+## Features
+* Uses React UI Library for snappy interface and app-like experience.
+* Registers service workers for offline caching of resources - loads instantly and works offline.
+* Communicate in real time with almost no delay using WebSockets.
+* Account Registeration and Identity Verification using sessions.
+
+## Screenshots
+
+![Login Screen](./public/screen1.jpg "Screenshot of login screen")
+
+![Conversations ](./public/screen2.jpg "Screenshot of conversations")
+
+
+
 
 ------------------------------------------------------------------------------------
 
