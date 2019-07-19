@@ -20,6 +20,10 @@ body {
     text-align: center;
 }
 
+.chatbox-container {
+    padding: 0px !important;
+}
+
 .toast {
     position: fixed;
     bottom: 20px;
@@ -140,7 +144,7 @@ body {
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
-    background: rgba(200, 200, 200, 0.9);
+    background: rgba(255, 255, 255, 0.35);
     color: black;
     max-width: 400px;
     word-wrap: break-word;
@@ -302,15 +306,6 @@ img.loading {
 }
 
 @media(max-width:500px) {
-    .mobile {
-        display: block;
-    }
-    .chat-app {
-        display: none;
-    }
-}
-
-@media(max-height:620px) {
     .mobile {
         display: block;
     }
