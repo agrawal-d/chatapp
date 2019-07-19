@@ -5,7 +5,7 @@ This project is live at https://hereisdx.github.io/chatapp .
 ChatApp is a public, real-time chat application. It uses WebSockets when possible to enable real time communication between clients. This application is made with React for the UI and functionality, and depends on a backend server ( chat-backend ) to facilitate identity verification and message delivery.
 
 ## Features
-* Uses React UI Library for snappy interface and app-like experience.
+* Uses React for a snappy interface and app-like experience.
 * Registers service workers for offline caching of resources - loads instantly and works offline.
 * Communicate in real time with almost no delay using WebSockets.
 * Account Registeration and Identity Verification using sessions.
