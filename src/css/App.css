@@ -360,6 +360,7 @@ comment {
     .bubble-container {
         height: calc(100vh - 110px);
         max-height: 100vh;
+        margin-bottom:60px;
     }
     .toast {
         top: 0px;
@@ -443,5 +444,13 @@ comment {
         left: 0px;
         height: calc(100vh - 60px);
         z-index: 100;
+    }
+    .chat-text-box-container {
+        height: 50px;
+        position: fixed;
+        width: 100%;
+        bottom: 0px;
+        z-index: 100;
+        left: 0px;
     }
 }
