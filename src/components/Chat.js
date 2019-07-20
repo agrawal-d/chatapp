@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 class Chat extends React.Component {
 
@@ -12,8 +13,16 @@ class Chat extends React.Component {
     }
 
     render() {
+        const ref = "#" + this.props.name;
         return (
-            <li className={(this.props.active) ? "active" : ""} onClick={this.activate}>{this.props.name}</li>
+            <li c
+                className={(this.props.active) ? "active" : ""}
+                onClick={this.activate}
+                href={ref}
+                id={this.props.name}
+            >
+                {this.props.name}
+            </li>
         )
     }
 }

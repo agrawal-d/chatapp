@@ -19,8 +19,8 @@ class ChatApp extends React.Component {
 
   constructor(props) {
     super(props);
-    this.activate = this.activate.bind(this);
     this.state = {
+      menuVisible: "ivisible",
       chatInterval: null,
       notDownloaded: true,
       toast: null,
@@ -32,6 +32,7 @@ class ChatApp extends React.Component {
       chats: [
       ]
     }
+    this.activate = this.activate.bind(this);
     this.handleProceedButton = this.handleProceedButton.bind(this);
     this.fecthNewMessagesForParticularChat = this.fecthNewMessagesForParticularChat.bind(this);
     this.submitMessage = this.submitMessage.bind(this)
@@ -40,6 +41,8 @@ class ChatApp extends React.Component {
     this.setupSockets = this.setupSockets.bind(this)
     this.createInitialChatRefreshInterval = this.createInitialChatRefreshInterval.bind(this);
     this.handleToast = this.handleToast.bind(this)
+    this.handleMenuToggle = this.handleMenuToggle.bind(this)
+
   }
 
   createInitialChatRefreshInterval() {
@@ -226,6 +229,8 @@ class ChatApp extends React.Component {
         })
         console.error("Fetch new messages error - >", error);
       })
+
+    this.handleMenuToggle();
   }
 
   submitMessage(to, value, chatId) {
@@ -278,6 +283,21 @@ class ChatApp extends React.Component {
     }
   }
 
+  handleMenuToggle() {
+    console.log("Menu toggle")
+    var visibility;
+    if (this.state.menuVisible === "menu-visible") {
+      visibility = "invisible"
+    } else {
+      visibility = "menu-visible"
+    }
+    this.setState({
+      menuVisible: visibility
+    })
+    console.log(this.state.menuVisible)
+  }
+
+
   render() {
     if (!this.state.globalSettings.loggedIn) {
       return (
@@ -315,20 +335,23 @@ class ChatApp extends React.Component {
       if (this.state.chats[this.state.activeChatIndex]) {
         chatId = this.state.chats[this.state.activeChatIndex].id;
       }
+      const menuVisibleClassName = "chats-inner " + this.state.menuVisible;
       return (
         <div>
           <div className="chat-app container">
             <Toast message={this.state.toast} time={this.state.toastTime} toastDuration={this.state.toastDuration} ></Toast>
             <div className="row app-row">
-              <div className="col-4 chats">
-                <div className="chats-inner">
+              <div className="col-md-4 chats">
+                <button className="menu-button" onClick={this.handleMenuToggle}>Toggle Menu</button>
+                <comment>Below contains menu items => search box and list of chats etc but not the menu toggler</comment>
+                <div className={menuVisibleClassName}>
                   <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} handleToast={this.handleToast} />
                   <ul>
                     {chats}
                   </ul>
                 </div>
               </div>
-              <div className="col-8 chatbox-container">
+              <div className="col-md-8 chatbox-container">
                 <Chatbox name={this.state.active} globalSettings={this.state.globalSettings} chat={this.state.chats[this.state.activeChatIndex]} submitMessage={this.submitMessage} socket={this.state.socket} chatId={chatId}></Chatbox>
               </div>
             </div>

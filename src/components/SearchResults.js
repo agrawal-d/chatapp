@@ -37,6 +37,7 @@ class SearchResults extends React.Component {
         })
     }
 
+
     handleSubmit(e) { // For new chat search
         if (e.keyCode === 13) {
             this.props.handleToast("Searching", 2000);
