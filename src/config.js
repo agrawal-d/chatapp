@@ -4,9 +4,9 @@ var globalSettings = {
     email: null,
     accessKey: null,
     loggedIn: null,
-    serverRoot: "https://chat-app-hereisdx.herokuapp.com/",
-}
+    serverRoot: "http://localhost:3000/",
 
+}
 /*
 serverRoot: "https://chat-app-hereisdx.herokuapp.com/",
 serverRoot: "http://localhost:3000/",

@@ -58,7 +58,7 @@ class Loginform extends React.Component {
                     <label htmlFor="new-account">&nbsp;Create a new account</label>
                     <br />
                     <p className="message">{this.props.message}</p>
-                    <small>&copy; 2019 Diyanshu Agrawal. All rights reserved.</small>
+                    <small>v3.0 <br></br>&copy; 2019 Diyanshu Agrawal. All rights reserved.</small>
                 </form>
             </div >
         )

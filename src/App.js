@@ -10,9 +10,11 @@ import Loginform from './components/LoginForm';
 import Chatbox from './components/ChatBox';
 import SearchResults from './components/SearchResults';
 import Chat from './components/Chat';
+import OfflineBox from './components/OfflineBox';
 import './css/bootstrap-grid.css';
 import './css/roboto.css';
 import './css/App.css';
+import menuIcon from './menu.svg';
 const axios = require('axios');
 
 class ChatApp extends React.Component {
@@ -28,6 +30,7 @@ class ChatApp extends React.Component {
       toastDuration: 5000,
       active: null,
       activeChatIndex: -1,
+      online: false,
       globalSettings: config.globalSettings,
       chats: [
       ]
@@ -93,13 +96,11 @@ class ChatApp extends React.Component {
   }
 
   setupSockets() {
+
     var socket = io(this.state.globalSettings.serverRoot);
-    socket.on('test', function (msg) {
-      console.log("Test Socket message  : ", msg);
-    });
-    this.setState({
-      socket: socket
-    })
+
+    socket.emit("new-user");
+
     socket.on("new-message", (data) => {
       console.log("Message from server  :", data);
       const chats = this.state.chats;
@@ -108,6 +109,35 @@ class ChatApp extends React.Component {
       this.setState({
         chats: chats
       })
+    })
+
+    socket.on("get-status", (data) => {
+      if (data === "online") {
+        this.setState({
+          online: true
+        })
+      } else {
+        this.setState({
+          online: false
+        })
+      }
+    })
+
+    socket.on("update-status", (data) => {
+      console.log("Recieved update", data)
+      if (data === "online") {
+        this.setState({
+          online: true
+        })
+      } else {
+        this.setState({
+          online: false
+        })
+      }
+    })
+
+    this.setState({
+      socket: socket
     })
   }
 
@@ -144,7 +174,6 @@ class ChatApp extends React.Component {
             globalSettings: seti,
             newAccount: response.data.newAccount
           })
-          this.setupSockets();
           axios.get(`${this.state.globalSettings.serverRoot}my-chats`, {
             withCredentials: true
           }, {
@@ -159,6 +188,7 @@ class ChatApp extends React.Component {
                 console.error("Login", response.data.error)
                 return;
               } else {
+                this.setupSockets();
                 const newState = this.state;
                 newState.chats = response.data;
                 newState.notDownloaded = false;
@@ -186,9 +216,16 @@ class ChatApp extends React.Component {
       console.log("Leaveing room", this.state.chats[oldActiveIndex].id);
       this.state.socket.emit('leave-room', this.state.chats[oldActiveIndex].id);
     }
+
+
+
     this.setState({
-      active: name
+      active: name,
+      onine: false
     })
+
+
+
     var index = -1;
     this.state.chats.find(function (item, i) {
       if (item.name === name) {
@@ -200,10 +237,15 @@ class ChatApp extends React.Component {
     this.setState({
       activeChatIndex: index
     })
+
+    this.state.socket.emit('join-room', name);
+    console.log("Joining room", name);
+
     console.log("Loading new messages for selected  chat", this.state.chats[index].id, this.state.chats[index].messages[this.state.chats[index].messages.length - 1].date);
     this.fecthNewMessagesForParticularChat(null, this.state.chats[index].id, this.state.chats[index].messages[this.state.chats[index].messages.length - 1].date)
-    console.log("Joining room", this.state.chats[index].id);
-    this.state.socket.emit('join-room', this.state.chats[index].id);
+
+    this.state.socket.emit("get-status", name);
+    console.log("Request online status for ", name);
   }
 
   fecthNewMessagesForParticularChat(name, chatId, date) {
@@ -297,7 +339,6 @@ class ChatApp extends React.Component {
     console.log(this.state.menuVisible)
   }
 
-
   render() {
     if (!this.state.globalSettings.loggedIn) {
       return (
@@ -338,11 +379,12 @@ class ChatApp extends React.Component {
       const menuVisibleClassName = "chats-inner " + this.state.menuVisible;
       return (
         <div>
+          <OfflineBox online={this.state.online} name={this.state.active} />
           <div className="chat-app container">
             <Toast message={this.state.toast} time={this.state.toastTime} toastDuration={this.state.toastDuration} ></Toast>
             <div className="row app-row">
               <div className="col-md-4 chats">
-                <button className="menu-button" onClick={this.handleMenuToggle}>Toggle Menu</button>
+                <button className="menu-button" onClick={this.handleMenuToggle}><img src={menuIcon} className="menu-icon" alt="Menu" /></button>
                 <comment>Below contains menu items => search box and list of chats etc but not the menu toggler</comment>
                 <div className={menuVisibleClassName}>
                   <SearchResults globalSettings={this.state.globalSettings} people={people} handleSearchResult={this.handleNewChat} handleToast={this.handleToast} />

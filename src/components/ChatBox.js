@@ -56,6 +56,7 @@ class Chatbox extends React.Component {
             this.setState({
                 newMessage: "",
             })
+            this.textBox.blur();
         }
     }
 
@@ -65,6 +66,7 @@ class Chatbox extends React.Component {
         this.setState({
             newMessage: newMessage
         })
+        this.textBox.focus();
     }
 
     render() {
@@ -101,7 +103,14 @@ class Chatbox extends React.Component {
                         </div>
                     </div>
                     <div className="chat-text-box-container">
-                        <input className="chat-text-box" placeholder="Enter your message here" value={this.state.newMessage} onChange={this.handleMessageBoxChange} onKeyUp={this.handleMessageBoxKeyPress} maxLength={256} />
+                        <input
+                            className="chat-text-box"
+                            placeholder="Enter your message here" value={this.state.newMessage}
+                            onChange={this.handleMessageBoxChange}
+                            onKeyUp={this.handleMessageBoxKeyPress}
+                            maxLength={256}
+                            ref={(input) => { this.textBox = input; }}
+                        />
                         <button className="smiley-button option-button" title="Send smiling face" onClick={this.handleSmiley}>🙂</button>
                         <div className="clearfix"></div>
                     </div>

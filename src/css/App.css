@@ -231,6 +231,10 @@ body {
     border: 0px;
 }
 
+.menu-icon {
+    height: 30px;
+}
+
 .login-field {
     display: block;
     margin: 0 auto;
@@ -302,6 +306,29 @@ img.loading {
     padding: 10px;
 }
 
+.offline-alert {
+    position: fixed;
+    bottom: 10px;
+    left: 35%;
+    width: 30%;
+    display: block;
+    padding: 5px;
+    background: rgba(245, 152, 65, 0.9);
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 10000;
+}
+
+.online {
+    background: rgba(18, 141, 59, 0.5) !important;
+    max-height: 30px;
+}
+
+.offline {
+    max-height: 30px;
+}
+
 /* @media(max-width:500px) {
     .mobile {
         display: block;
@@ -334,12 +361,13 @@ comment {
         width: 100%;
         margin: 0px;
         height: 100vh;
+        padding: 15px;
     }
     .login-text {
         margin-top: 30px;
     }
     .login-subtext {
-        text-align: left;
+        text-align: center;
     }
     .search-results-list {
         width: 100vw;
@@ -349,6 +377,11 @@ comment {
         z-index: 10;
         margin: 0px;
     }
+    .login-field {
+        width: 90%;
+        margin: 0 auto;
+        display: block;
+    }
     .chats {
         height: 0px;
     }
@@ -356,11 +389,12 @@ comment {
         height: calc(100vh - 150px);
         width: 100%;
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.65);
     }
     .bubble-container {
         height: calc(100vh - 110px);
         max-height: 100vh;
-        margin-bottom:60px;
+        margin-bottom: 60px;
     }
     .toast {
         top: 0px;
@@ -399,11 +433,13 @@ comment {
         position: fixed;
         top: 0px;
         height: 60px;
-        left: 50%;
-        width: 50%;
+        left: 20%;
+        width: 80%;
         word-wrap: wrap break-word;
         overflow: hidden;
         display: block;
+        background: white;
+        text-align: center;
     }
     .chats-inner ul li {
         border-top: 1px solid whitesmoke;
@@ -426,7 +462,7 @@ comment {
         left: 0px;
         top: 0px;
         z-index: 1000000;
-        width: 50%;
+        width: 20%;
         height: 60px;
         border: 0px;
         outline: none;
@@ -437,6 +473,11 @@ comment {
         top: 60px;
         left: 0px;
         display: block;
+        overflow-y: auto;
+        padding-bottom: 10px;
+    }
+    .bubble-container {
+        padding-top: 45px !important;
     }
     .chatbox {
         position: fixed;
@@ -452,5 +493,18 @@ comment {
         bottom: 0px;
         z-index: 100;
         left: 0px;
+    }
+    .offline-alert {
+        position: fixed;
+        top: 60px;
+        left: 0%;
+        width: 100%;
+        display: block;
+        padding: 5px;
+        background: rgba(240, 127, 61, 0.9);
+        color: white;
+        border-radius: 0px;
+        text-align: center;
+        z-index: 900;
     }
 }
