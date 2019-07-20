@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/chatapp/static/css/main.05c7f22e.chunk.css",
+    "main.css": "/chatapp/static/css/main.8b4e2f9a.chunk.css",
     "main.js": "/chatapp/static/js/main.aad6957a.chunk.js",
     "main.js.map": "/chatapp/static/js/main.aad6957a.chunk.js.map",
     "runtime~main.js": "/chatapp/static/js/runtime~main.e147c499.js",
@@ -8,9 +8,9 @@
     "static/js/2.3b5df2c4.chunk.js": "/chatapp/static/js/2.3b5df2c4.chunk.js",
     "static/js/2.3b5df2c4.chunk.js.map": "/chatapp/static/js/2.3b5df2c4.chunk.js.map",
     "index.html": "/chatapp/index.html",
-    "precache-manifest.7d78027067927204043cfb3d86afef00.js": "/chatapp/precache-manifest.7d78027067927204043cfb3d86afef00.js",
+    "precache-manifest.27707a2fe34821b58b06ab461a887e09.js": "/chatapp/precache-manifest.27707a2fe34821b58b06ab461a887e09.js",
     "service-worker.js": "/chatapp/service-worker.js",
-    "static/css/main.05c7f22e.chunk.css.map": "/chatapp/static/css/main.05c7f22e.chunk.css.map",
+    "static/css/main.8b4e2f9a.chunk.css.map": "/chatapp/static/css/main.8b4e2f9a.chunk.css.map",
     "static/media/loading.gif": "/chatapp/static/media/loading.e6ebdebf.gif"
   }
 }
