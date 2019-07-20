@@ -29,7 +29,7 @@ body {
     bottom: 20px;
     right: 20px;
     padding: 20px;
-    background: rgba(83, 192, 101, 1);
+    background: rgb(40, 43, 41);
     color: white;
     transition: all 1s;
     opacity: 1;
@@ -156,7 +156,7 @@ body {
     float: right;
     clear: both;
     color: black;
-    background: rgba(134, 236, 192, 0.5);
+    background: rgba(66, 198, 208, 0.5);
 }
 
 .chat-bubble.received {
@@ -362,31 +362,34 @@ comment {
         max-height: 100vh;
     }
     .toast {
-        bottom: 0;
+        top: 0px;
+        height: 60px;
         position: fixed;
         right: 0px;
         width: 100vw;
         z-index: 10000000;
         position: fixed;
         margin: 0px;
-        background: rgba(134, 236, 192, 1) !important;
+        background: rgb(48, 53, 51) !important;
         opacity: 1 !important;
-        color: black;
+        color: white;
     }
     .chat-bubble {
         max-width: 70%;
     }
     .chat-search {
-        /* position: fixed;
-        top: 0px;
-        left: 0px; */
         background: white;
         color: black;
         width: 90%;
         margin-left: 5%;
         margin-top: 5%;
-        background: whitesmoke;
+        background: rgb(241, 232, 232);
         height: 60px;
+    }
+    .chat-search:focus {
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+        background: white;
+        color: black;
     }
     .chats-inner ul {
         margin-top: 55px;
@@ -394,10 +397,12 @@ comment {
     .chats-inner ul li.active {
         position: fixed;
         top: 0px;
+        height: 60px;
         left: 50%;
         width: 50%;
         word-wrap: wrap break-word;
         overflow: hidden;
+        display: block;
     }
     .chats-inner ul li {
         border-top: 1px solid whitesmoke;
@@ -406,7 +411,8 @@ comment {
     .chats-inner {
         position: fixed;
         top: 0px;
-        left: -500px;
+        display: block;
+        left: -9999px;
         z-index: 1000000000000;
         background: white;
         width: 100%;
@@ -429,6 +435,7 @@ comment {
     .menu-visible {
         top: 60px;
         left: 0px;
+        display: block;
     }
     .chatbox {
         position: fixed;
